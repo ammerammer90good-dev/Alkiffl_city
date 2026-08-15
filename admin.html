@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>لوحة إدارة — مدينة الكفل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf7f0;--bg-2:#f3ede0;--surface:#fff;--surface-2:#faf6ed;
+  --text:#1a1612;--text-muted:#6b6358;--text-light:#9b9388;
+  --border:#e8e0cf;--border-strong:#d4c9b0;
+  --primary:#0a6e5c;--primary-hover:#074d40;--primary-light:#d4f0e8;--primary-soft:#e8f7f2;
+  --accent:#c2410c;--accent-hover:#9a3412;--accent-light:#fce8dc;
+  --gold:#b45309;--gold-light:#fef3c7;
+  --danger:#b91c1c;--danger-light:#fee2e2;
+  --success:#15803d;--success-light:#dcfce7;
+  --warning:#a16207;--warning-light:#fef3c7;
+  --info:#0369a1;--info-light:#dbeafe;
+  --shadow-sm:0 1px 2px rgba(26,22,18,.05);
+  --shadow:0 4px 12px rgba(26,22,18,.08);
+  --shadow-md:0 8px 24px rgba(26,22,18,.1);
+  --shadow-lg:0 20px 48px rgba(26,22,18,.15);
+  --radius:14px;--radius-sm:10px;--radius-lg:20px;
+  --sidebar-w:260px;
+  --font-display:'Cairo',system-ui,sans-serif;
+  --font-body:'Tajawal',system-ui,sans-serif;
+}
+[data-theme="dark"]{
+  --bg:#0f1310;--bg-2:#161b17;--surface:#1a201c;--surface-2:#1f2621;
+  --text:#f0ebe0;--text-muted:#a8a092;--text-light:#7a7368;
+  --border:#2a322d;--border-strong:#3a4438;
+  --primary:#2dd4a7;--primary-hover:#14b88a;--primary-light:#0f3a30;--primary-soft:#13271f;
+  --accent:#f97316;--accent-hover:#ea580c;--accent-light:#3a1f0e;
+  --shadow:0 4px 12px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 20px 48px rgba(0,0,0,.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden;width:100%}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:800}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+ul{list-style:none}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg-2)}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:5px}
+
+.layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh}
+.sidebar{background:var(--surface);border-left:1px solid var(--border);position:sticky;top:0;height:100vh;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:6px}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:8px 10px 18px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.sidebar-logo .mark{width:42px;height:42px;background:linear-gradient(135deg,var(--primary),var(--primary-hover));border-radius:12px;display:grid;place-items:center;color:#fff;box-shadow:0 4px 12px rgba(10,110,92,.3);flex-shrink:0}
+.sidebar-logo .mark svg{width:24px;height:24px}
+.sidebar-logo h1{font-size:17px;font-weight:900;color:var(--primary);line-height:1.2}
+.sidebar-logo small{font-size:11px;color:var(--text-muted);font-weight:500}
+.sidebar-section{font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.8px;padding:14px 10px 6px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;font-size:14px;font-weight:600;color:var(--text-muted);transition:all .15s;cursor:pointer}
+.nav-item:hover{background:var(--surface-2);color:var(--text)}
+.nav-item.active{background:var(--primary);color:#fff;box-shadow:0 4px 10px rgba(10,110,92,.2)}
+.nav-item svg{width:19px;height:19px;flex-shrink:0}
+.nav-item .count{margin-right:auto;background:var(--surface-2);color:var(--text-muted);font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;min-width:22px;text-align:center}
+.nav-item.active .count{background:rgba(255,255,255,.2);color:#fff}
+.sidebar-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--border)}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface-2);border-radius:10px}
+.sidebar-user .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-hover));display:grid;place-items:center;color:#fff;font-weight:900;flex-shrink:0}
+.sidebar-user h4{font-size:13px;font-weight:800}
+.sidebar-user p{font-size:11px;color:var(--text-muted)}
+.role-badge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;background:var(--gold-light);color:var(--gold);font-weight:700;margin-top:2px}
+
+.main-area{padding:24px 28px;overflow-x:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap}
+.topbar h2{font-size:22px;font-weight:800}
+.breadcrumb{font-size:13px;color:var(--text-muted);margin-bottom:4px}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.search-box{position:relative;display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0 12px;width:280px}
+.search-box svg{width:18px;height:18px;color:var(--text-muted)}
+.search-box input{border:none;outline:none;padding:9px 10px;background:none;flex:1;font-size:14px;color:var(--text)}
+.icon-btn{width:42px;height:42px;display:grid;place-items:center;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text-muted);transition:all .2s;position:relative}
+.icon-btn:hover{color:var(--primary);border-color:var(--primary)}
+.icon-btn svg{width:20px;height:20px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-weight:700;font-size:13.5px;font-family:var(--font-display);transition:all .2s;white-space:nowrap;border:1.5px solid transparent;cursor:pointer}
+.btn svg{width:17px;height:17px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-hover)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-outline{border-color:var(--border-strong);color:var(--text)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+.btn-ghost{background:var(--surface-2);color:var(--text)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-success{background:var(--success);color:#fff}
+.btn-warning{background:var(--warning);color:#fff}
+.btn-sm{padding:6px 11px;font-size:12px;border-radius:8px}
+.btn-icon{padding:7px;width:32px;height:32px;justify-content:center}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.stat-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.stat-card-icn{width:46px;height:46px;border-radius:12px;display:grid;place-items:center}
+.stat-card-icn svg{width:22px;height:22px}
+.stat-card.green .stat-card-icn{background:var(--primary-soft);color:var(--primary)}
+.stat-card.orange .stat-card-icn{background:var(--accent-light);color:var(--accent)}
+.stat-card.gold .stat-card-icn{background:var(--gold-light);color:var(--gold)}
+.stat-card.red .stat-card-icn{background:var(--danger-light);color:var(--danger)}
+.stat-card.blue .stat-card-icn{background:var(--info-light);color:var(--info)}
+.stat-card h3{font-size:28px;font-weight:900;font-family:var(--font-display);color:var(--text);margin-bottom:2px}
+.stat-card p{font-size:13px;color:var(--text-muted);font-weight:600}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.panel-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.panel-head h3{font-size:16px;font-weight:800}
+.panel-body{padding:0;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead{background:var(--surface-2)}
+th{text-align:right;padding:13px 16px;font-weight:700;color:var(--text-muted);font-size:12px;font-family:var(--font-display);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:13px 16px;border-bottom:1px solid var(--border);color:var(--text)}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr:last-child td{border-bottom:none}
+.cell-title{font-weight:700;color:var(--text)}
+.cell-meta{font-size:12px;color:var(--text-muted);margin-top:2px}
+.cell-price{font-family:var(--font-display);font-weight:800;color:var(--accent)}
+.cell-thumb{display:flex;align-items:center;gap:10px}
+.cell-thumb img{width:44px;height:44px;border-radius:8px;object-fit:cover;background:var(--bg-2)}
+.cell-thumb-ph{width:44px;height:44px;border-radius:8px;background:var(--bg-2);display:grid;place-items:center;color:var(--text-light)}
+.row-actions{display:flex;gap:4px}
+
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:6px;font-family:var(--font-display)}
+.badge-success{background:var(--success-light);color:var(--success)}
+.badge-warning{background:var(--warning-light);color:var(--warning)}
+.badge-danger{background:var(--danger-light);color:var(--danger)}
+.badge-info{background:var(--info-light);color:var(--info)}
+.badge-muted{background:var(--surface-2);color:var(--text-muted)}
+.badge-gold{background:var(--gold-light);color:var(--gold)}
+.badge-primary{background:var(--primary-light);color:var(--primary)}
+
+.filters-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filter-select{padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:13.5px;font-weight:600;outline:none;cursor:pointer;color:var(--text)}
+
+.chart-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;margin-bottom:24px}
+.chart-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.chart-panel h3{font-size:15px;font-weight:800;margin-bottom:16px}
+.bar-chart{display:flex;align-items:flex-end;gap:12px;height:200px;padding-top:20px}
+.bar{flex:1;background:linear-gradient(180deg,var(--primary),var(--primary-hover));border-radius:6px 6px 0 0;position:relative;min-height:8px;transition:all .3s;display:flex;align-items:flex-start;justify-content:center}
+.bar:hover{filter:brightness(1.1)}
+.bar-label{position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-muted);font-weight:600;white-space:nowrap}
+.bar-value{position:absolute;top:-24px;font-size:11px;color:var(--text);font-weight:700}
+
+.donut{display:flex;align-items:center;gap:20px}
+.donut-svg{width:140px;height:140px;flex-shrink:0;transform:rotate(-90deg)}
+.donut-svg circle{fill:none;stroke-width:16}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:10px}
+.donut-legend-item{display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.donut-legend-item .label{display:flex;align-items:center;gap:8px;color:var(--text-muted)}
+.donut-legend-item .label .dot{width:10px;height:10px;border-radius:3px}
+.donut-legend-item .val{font-weight:800;font-family:var(--font-display)}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;font-family:var(--font-display)}
+.form-control{width:100%;padding:10px 13px;background:var(--surface-2);border:1.5px solid var(--border);border-radius:9px;font-size:14px;outline:none;transition:all .2s;color:var(--text)}
+.form-control:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+
+.modal{position:fixed;inset:0;background:rgba(15,19,16,.6);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal.active{display:flex;animation:fadeIn .25s}
+.modal-box{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:600px;margin:auto;box-shadow:var(--shadow-lg);animation:slideUp .3s ease;max-height:calc(100vh - 40px);display:flex;flex-direction:column}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-size:17px;font-weight:800}
+.modal-close{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--surface-2);color:var(--text-muted);transition:all .2s;cursor:pointer}
+.modal-close:hover{background:var(--danger-light);color:var(--danger)}
+.modal-body{padding:22px;overflow-y:auto;flex:1}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-start;background:var(--surface-2)}
+
+.toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--surface);border:1px solid var(--border);border-right:4px solid var(--primary);border-radius:11px;padding:13px 17px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-lg);font-size:14px;font-weight:600;min-width:280px;pointer-events:auto;animation:slideInDown .3s}
+@keyframes slideInDown{from{transform:translateY(-20px);opacity:0}to{transform:none;opacity:1}}
+.toast.success{border-right-color:var(--success)}
+.toast.error{border-right-color:var(--danger)}
+.toast.warning{border-right-color:var(--warning)}
+.toast svg{width:19px;height:19px;flex-shrink:0}
+.toast.success svg{color:var(--success)}
+.toast.error svg{color:var(--danger)}
+.toast.warning svg{color:var(--warning)}
+
+.empty{text-align:center;padding:50px 20px;color:var(--text-muted)}
+.empty svg{width:56px;height:56px;margin-bottom:10px;color:var(--border-strong)}
+.empty h3{font-size:16px;color:var(--text);margin-bottom:4px}
+.hidden{display:none!important}
+
+@media(max-width:1100px){.chart-grid{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:fixed;right:-280px;z-index:200;transition:right .3s;width:var(--sidebar-w)}
+  .sidebar.open{right:0}
+  .main-area{padding:16px}
+  .search-box{width:200px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:1fr}
+  .search-box{display:none}
+  .topbar h2{font-size:18px}
+  table{font-size:12px}
+  th,td{padding:10px 8px}
+}
+</style>
+</head>
+<body dir="rtl">
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 001 1h12a1 1 0 001-1V9.5"/><path d="M9 21v-7h6v7"/></svg></div>
+      <div><h1>مدينة الكفل</h1><small>لوحة الإدارة</small></div>
+    </div>
+    <nav id="navMenu"></nav>
+    <div class="sidebar-foot">
+      <div class="sidebar-user">
+        <div class="avatar" id="adminAvatar">م</div>
+        <div style="flex:1;min-width:0">
+          <h4 id="adminName">مدير</h4>
+          <p id="adminEmail">admin@kufa.iq</p>
+          <span class="role-badge" id="adminRole">Super Admin</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <div class="topbar">
+      <div>
+        <div class="breadcrumb" id="breadcrumb">لوحة التحكم</div>
+        <h2 id="pageTitle">نظرة عامة</h2>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" placeholder="بحث سريع..." id="quickSearch" oninput="Admin.quickSearch(this.value)">
+        </div>
+        <button class="icon-btn" onclick="Admin.toggleTheme()" title="الوضع الليلي">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+        </button>
+        <button class="icon-btn" onclick="window.location='index.html'" title="الذهاب للموقع">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 001 1h12a1 1 0 001-1V9.5"/><path d="M9 21v-7h6v7"/></svg>
+        </button>
+        <button class="icon-btn" id="menuToggle" onclick="document.getElementById('sidebar').classList.toggle('open')" title="القائمة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalTitle">عنوان</h3>
+      <button class="modal-close" onclick="Admin.closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://jjmnzpdmcjfcxlkbbnzl.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_UXPagJgxP38dYZsND9aprg_lplZyAAc';
+const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const Local={
+  get(k,d=null){try{return JSON.parse(localStorage.getItem('mk_'+k))??d}catch{return d}},
+  set(k,v){localStorage.setItem('mk_'+k,JSON.stringify(v))}
+};
+
+/* ===== المصادقة (نفس منطق index.html) ===== */
+const Auth={
+  current:null,
+  async init(){
+    const {data:{session}}=await supa.auth.getSession();
+    if(session)await this.loadProfile(session.user);
+  },
+  async loadProfile(authUser){
+    const {data,error}=await supa.from('profiles').select('*').eq('id',authUser.id).single();
+    if(error||!data){this.current=null;return}
+    this.current={
+      id:data.id, name:data.name, email:authUser.email, phone:data.phone,
+      role:data.role, status:data.status, joinedAt:(data.created_at||'').split('T')[0]
+    };
+  }
+};
+
+/* ===== دوال تحويل صفوف قاعدة البيانات ===== */
+function mapAdRow(r){
+  return {
+    id:r.id, userId:r.user_id, title:r.title, cat:r.cat, type:r.type,
+    price:Number(r.price), location:r.location, desc:r.description,
+    images:r.images||[], phone:r.phone, status:r.status, featured:r.featured,
+    views:r.views, favorites:r.favorites_count, shares:r.shares, contacts:r.contacts,
+    createdAt:new Date(r.created_at).getTime(),
+    ...(r.attrs||{})
+  };
+}
+function mapUserRow(r){
+  return {id:r.id,name:r.name,email:r.email,phone:r.phone,role:r.role,status:r.status,
+    joinedAt:r.created_at?new Date(r.created_at).toISOString().split('T')[0]:'-'};
+}
+function mapReportRow(r){
+  return {id:r.id,reporterId:r.reporter_id,adId:r.ad_id,reason:r.reason,desc:r.description,
+    status:r.status,createdAt:new Date(r.created_at).getTime()};
+}
+function mapBizRow(r){
+  return {id:r.id,userId:r.user_id,name:r.name,cat:r.cat,location:r.location,desc:r.description,
+    phone:r.phone,verified:r.verified,rating:r.rating};
+}
+function mapServiceRow(r){
+  return {id:r.id,userId:r.user_id,type:r.type,title:r.title,price:Number(r.price),location:r.location};
+}
+function mapJobRow(r){
+  return {id:r.id,userId:r.user_id,title:r.title,employer:r.employer,salary:Number(r.salary),
+    location:r.location,type:r.type};
+}
+
+/* ===== طبقة البيانات ===== */
+const DB={
+  ads:[], users:[], reports:[], businesses:[], services:[], jobs:[], locations:[],
+  settings:{site_name:'مدينة الكفل', tagline:'', auto_approve:false, contact_address:'', contact_phone:'', contact_email:'', contact_hours:''},
+
+  async loadStatic(){
+    const [{data:locs},{data:settings}]=await Promise.all([
+      supa.from('locations').select('*').order('sort_order'),
+      supa.from('settings').select('*').eq('id',1).single()
+    ]);
+    this.locations=(locs||[]).map(l=>({id:l.id,name:l.name}));
+    if(settings)this.settings=settings;
+  },
+
+  async loadUsers(){
+    const {data,error}=await supa.rpc('admin_list_users');
+    if(error){console.error('تحميل المستخدمين:',error);this.users=[];return}
+    this.users=(data||[]).map(mapUserRow);
+  },
+
+  async loadAds(){
+    const {data,error}=await supa.from('ads').select('*').order('created_at',{ascending:false});
+    if(error){console.error('تحميل الإعلانات:',error);return}
+    this.ads=(data||[]).map(mapAdRow);
+  },
+
+  async loadReports(){
+    const {data,error}=await supa.from('reports').select('*').order('created_at',{ascending:false});
+    if(error){console.error('تحميل البلاغات:',error);return}
+    this.reports=(data||[]).map(mapReportRow);
+  },
+
+  async loadBusinesses(){
+    const {data,error}=await supa.from('businesses').select('*').order('created_at',{ascending:false});
+    if(error){console.error(error);return}
+    this.businesses=(data||[]).map(mapBizRow);
+  },
+  async loadServices(){
+    const {data,error}=await supa.from('services').select('*').order('created_at',{ascending:false});
+    if(error){console.error(error);return}
+    this.services=(data||[]).map(mapServiceRow);
+  },
+  async loadJobs(){
+    const {data,error}=await supa.from('jobs').select('*').order('created_at',{ascending:false});
+    if(error){console.error(error);return}
+    this.jobs=(data||[]).map(mapJobRow);
+  },
+
+  async loadAll(){
+    await this.loadStatic();
+    await Promise.all([
+      this.loadUsers(), this.loadAds(), this.loadReports(),
+      this.loadBusinesses(), this.loadServices(), this.loadJobs()
+    ]);
+  }
+};
+const I={
+  chart:'<path d="M3 3v18h18"/><path d="M7 16l4-4 3 3 5-6"/>',
+  tag:'<path d="M20.5 13.5L13 21l-9-9V3h9l7.5 7.5a1.4 1.4 0 010 2z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+  users:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
+  pin:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
+  report:'<path d="M4 22V4a2 2 0 012-2h12a2 2 0 012 2v18l-4-2-4 2-4-2-4 2z"/><path d="M9 8h6M9 12h6"/>',
+  star:'<path d="M12 2l3 7 7 .5-5.5 4.5L18 21l-6-4-6 4 1.5-7L2 9.5 9 9z"/>',
+  store:'<path d="M3 9l2-5h14l2 5M4 9v11h16V9M4 9h16M9 20v-6h6v6"/>',
+  briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  check:'<path d="M20 6L9 17l-5-5"/>',
+  x:'<path d="M18 6L6 18M6 6l12 12"/>',
+  eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 113 3L7 19l-4 1 1-4 12.5-12.5z"/>',
+  trash:'<path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>',
+  logout:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>',
+  money:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/>',
+  flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22V15"/>'
+};
+
+const CATS=[
+  {id:'realestate',name:'العقارات'},{id:'vehicles',name:'السيارات والمركبات'},
+  {id:'mobiles',name:'الموبايلات والأجهزة'},{id:'furniture',name:'الأثاث والمنزل'},
+  {id:'electronics',name:'الإلكترونيات'},{id:'building',name:'مواد البناء'},
+  {id:'animals',name:'المواشي والحيوانات'},{id:'services',name:'الخدمات'},
+  {id:'jobs',name:'الوظائف'},{id:'business',name:'المحلات التجارية'},
+  {id:'food',name:'المواد الغذائية'},{id:'land',name:'الأراضي'},
+  {id:'bikes',name:'الدراجات'},{id:'other',name:'أخرى'}
+];
+
+const Admin={
+  currentTab:'dashboard',
+
+  async init(){
+    await Auth.init();
+    if(!Auth.current){window.location='index.html';return}
+    if(Auth.current.role!=='admin'&&Auth.current.role!=='superadmin'){
+      alert('ليس لديك صلاحية للوصول لهذه الصفحة');
+      window.location='index.html';
+      return;
+    }
+    if(Auth.current.status!=='active'){
+      alert('حسابك موقوف');
+      window.location='index.html';
+      return;
+    }
+
+    try{
+      await DB.loadAll();
+    }catch(err){
+      console.error('فشل تحميل البيانات:',err);
+      this.toast('تعذّر الاتصال بالخادم','error');
+    }
+
+    document.getElementById('adminAvatar').textContent=Auth.current.name[0];
+    document.getElementById('adminName').textContent=Auth.current.name;
+    document.getElementById('adminEmail').textContent=Auth.current.email;
+    document.getElementById('adminRole').textContent=Auth.current.role==='superadmin'?'Super Admin':'Admin';
+
+    this.applyTheme();
+    this.buildMenu();
+    this.render('dashboard');
+  },
+
+  buildMenu(){
+    const pending=DB.ads.filter(a=>a.status==='pending').length;
+    const pendingReports=DB.reports.filter(r=>r.status==='pending').length;
+
+    const menu=[
+      {sec:'الرئيسية'},
+      {id:'dashboard',name:'لوحة المعلومات',icon:'chart'},
+      {id:'ads',name:'الإعلانات',icon:'tag',count:DB.ads.length},
+      {id:'pending',name:'قيد المراجعة',icon:'report',count:pending},
+      {id:'reports',name:'البلاغات',icon:'flag',count:pendingReports},
+      {sec:'الإدارة'},
+      {id:'users',name:'المستخدمون',icon:'users',count:DB.users.length},
+      {id:'businesses',name:'المحلات التجارية',icon:'store'},
+      {id:'services',name:'الخدمات',icon:'store'},
+      {id:'jobs',name:'الوظائف',icon:'briefcase'},
+      {id:'featured',name:'الإعلانات المميزة',icon:'star'},
+      {sec:'النظام'},
+      {id:'categories',name:'الفئات',icon:'grid'},
+      {id:'locations',name:'المواقع',icon:'pin'},
+      {id:'settings',name:'الإعدادات',icon:'settings'},
+      {id:'permissions',name:'الصلاحيات',icon:'shield'}
+    ];
+
+    document.getElementById('navMenu').innerHTML=menu.map(m=>{
+      if(m.sec)return `<div class="sidebar-section">${m.sec}</div>`;
+      return `<a class="nav-item ${this.currentTab===m.id?'active':''}" onclick="Admin.render('${m.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I[m.icon]}</svg>
+        ${m.name}
+        ${m.count!==undefined?`<span class="count">${m.count}</span>`:''}
+      </a>`;
+    }).join('');
+  },
+
+  render(tab){
+    this.currentTab=tab;
+    this.buildMenu();
+    const titles={dashboard:'لوحة المعلومات',ads:'الإعلانات',pending:'قيد المراجعة',reports:'البلاغات',users:'المستخدمون',businesses:'المحلات التجارية',services:'الخدمات',jobs:'الوظائف',featured:'الإعلانات المميزة',categories:'الفئات',locations:'المواقع',settings:'الإعدادات',permissions:'الصلاحيات'};
+    document.getElementById('pageTitle').textContent=titles[tab]||'';
+    document.getElementById('breadcrumb').textContent='لوحة التحكم · '+(titles[tab]||'');
+
+    const c=document.getElementById('content');
+    if(tab==='dashboard')c.innerHTML=this.viewDashboard();
+    else if(tab==='ads')c.innerHTML=this.viewAds('all');
+    else if(tab==='pending')c.innerHTML=this.viewAds('pending');
+    else if(tab==='reports')c.innerHTML=this.viewReports();
+    else if(tab==='users')c.innerHTML=this.viewUsers();
+    else if(tab==='businesses')c.innerHTML=this.viewBusinesses();
+    else if(tab==='services')c.innerHTML=this.viewServices();
+    else if(tab==='jobs')c.innerHTML=this.viewJobs();
+    else if(tab==='featured')c.innerHTML=this.viewFeatured();
+    else if(tab==='categories')c.innerHTML=this.viewCategories();
+    else if(tab==='locations')c.innerHTML=this.viewLocations();
+    else if(tab==='settings')c.innerHTML=this.viewSettings();
+    else if(tab==='permissions')c.innerHTML=this.viewPermissions();
+  },
+
+  viewDashboard(){
+    const ads=DB.ads, users=DB.users;
+    const pending=ads.filter(a=>a.status==='pending').length;
+    const totalViews=ads.reduce((s,a)=>s+(a.views||0),0);
+
+    const days=[];
+    const dayMs=86400000;
+    const now=Date.now();
+    for(let i=6;i>=0;i--){
+      const start=now-i*dayMs;
+      const count=ads.filter(a=>a.createdAt>=start-dayMs&&a.createdAt<start).length;
+      days.push({day:new Date(start).toLocaleDateString('ar-IQ',{weekday:'short'}),count});
+    }
+    const maxCount=Math.max(...days.map(d=>d.count),1);
+
+    const catCounts=CATS.map(c=>({name:c.name,count:ads.filter(a=>a.cat===c.id).length})).sort((a,b)=>b.count-a.count).slice(0,5);
+    const totalCatAds=catCounts.reduce((s,c)=>s+c.count,0)||1;
+    let colors=['#0a6e5c','#c2410c','#b45309','#0369a1','#7c2d12'];
+
+    return `
+      <div class="stats-grid">
+        <div class="stat-card green"><div class="stat-card-top"><div class="stat-card-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I.tag}</svg></div></div><h3>${ads.length}</h3><p>إجمالي الإعلانات</p></div>
+        <div class="stat-card gold"><div class="stat-card-top"><div class="stat-card-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I.report}</svg></div></div><h3>${pending}</h3><p>قيد المراجعة</p></div>
+        <div class="stat-card orange"><div class="stat-card-top"><div class="stat-card-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I.users}</svg></div></div><h3>${users.length}</h3><p>المستخدمون</p></div>
+        <div class="stat-card blue"><div class="stat-card-top"><div class="stat-card-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I.eye}</svg></div></div><h3>${totalViews.toLocaleString('ar-IQ')}</h3><p>إجمالي المشاهدات</p></div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-panel">
+          <h3>الإعلانات المنشورة (آخر 7 أيام)</h3>
+          <div class="bar-chart">
+            ${days.map(d=>`<div class="bar" style="height:${(d.count/maxCount)*100}%" title="${d.count} إعلان"><span class="bar-value">${d.count}</span><span class="bar-label">${d.day}</span></div>`).join('')}
+          </div>
+        </div>
+        <div class="chart-panel">
+          <h3>توزيع الإعلانات حسب الفئة</h3>
+          <div class="donut">
+            <svg class="donut-svg" viewBox="0 0 100 100">
+              ${this.renderDonut(catCounts.map((c,i)=>({val:c.count/totalCatAds,color:colors[i]})))}
+              <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface)" stroke-width="20"></circle>
+            </svg>
+            <div class="donut-legend">
+              ${catCounts.map((c,i)=>`<div class="donut-legend-item"><span class="label"><span class="dot" style="background:${colors[i]}"></span>${c.name}</span><span class="val">${c.count}</span></div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>أحدث الإعلانات المضافة</h3><button class="btn btn-outline btn-sm" onclick="Admin.render('ads')">عرض الكل</button></div>
+        <div class="panel-body">
+          <table>
+            <thead><tr><th>العنوان</th><th>الناشر</th><th>السعر</th><th>الحالة</th><th>التاريخ</th></tr></thead>
+            <tbody>
+              ${ads.slice(0,5).map(a=>{
+                const u=users.find(u=>u.id===a.userId);
+                return `<tr>
+                  <td><div class="cell-title">${this.esc(a.title)}</div><div class="cell-meta">${CATS.find(c=>c.id===a.cat)?.name||''}</div></td>
+                  <td>${u?u.name:'محذوف'}</td>
+                  <td class="cell-price">${Number(a.price).toLocaleString('ar-IQ')} د.ع</td>
+                  <td>${this.statusBadge(a.status)}</td>
+                  <td>${new Date(a.createdAt).toLocaleDateString('ar-IQ')}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  },
+
+  renderDonut(data){
+    let offset=0;
+    const r=40,circ=2*Math.PI*r;
+    return data.map(d=>{
+      const dash=d.val*circ;
+      const circle=`<circle cx="50" cy="50" r="${r}" stroke="${d.color}" stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${offset}"></circle>`;
+      offset-=dash;
+      return circle;
+    }).join('');
+  },
+
+  statusBadge(s){
+    const m={approved:['success','منشور'],pending:['warning','قيد المراجعة'],rejected:['danger','مرفوض'],sold:['info','مباع'],rented:['info','مؤجر'],reserved:['warning','محجوز'],draft:['muted','مسودة'],hidden:['muted','مخفي']};
+    const [cls,txt]=m[s]||['muted',s];
+    return `<span class="badge badge-${cls}">${txt}</span>`;
+  },
+
+  viewAds(filter){
+    let ads=[...DB.ads];
+    if(filter==='pending')ads=ads.filter(a=>a.status==='pending');
+
+    return `
+      <div class="panel">
+        <div class="panel-head">
+          <h3>${filter==='pending'?'الإعلانات قيد المراجعة':'كل الإعلانات'} (${ads.length})</h3>
+          <div class="filters-row">
+            <select class="filter-select" onchange="Admin.filterTable(this.value,'cat')">
+              <option value="">كل الفئات</option>
+              ${CATS.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}
+            </select>
+            <select class="filter-select" onchange="Admin.filterTable(this.value,'status')">
+              <option value="">كل الحالات</option>
+              <option value="approved">منشور</option>
+              <option value="pending">قيد المراجعة</option>
+              <option value="rejected">مرفوض</option>
+              <option value="sold">مباع</option>
+              <option value="hidden">مخفي</option>
+            </select>
+          </div>
+        </div>
+        <div class="panel-body">
+          ${ads.length?`<table id="adsTable">
+            <thead><tr><th>العنوان</th><th>الناشر</th><th>السعر</th><th>الحالة</th><th>المشاهدات</th><th>التاريخ</th><th>إجراءات</th></tr></thead>
+            <tbody>
+              ${ads.map(a=>{
+                const u=DB.users.find(u=>u.id===a.userId);
+                return `<tr data-cat="${a.cat}" data-status="${a.status}">
+                  <td><div class="cell-title">${this.esc(a.title)}</div><div class="cell-meta">${CATS.find(c=>c.id===a.cat)?.name||''} · ${a.location||''}</div></td>
+                  <td>${u?u.name:'محذوف'}</td>
+                  <td class="cell-price">${Number(a.price).toLocaleString('ar-IQ')} د.ع</td>
+                  <td>${this.statusBadge(a.status)}</td>
+                  <td>${a.views||0}</td>
+                  <td>${new Date(a.createdAt).toLocaleDateString('ar-IQ')}</td>
+                  <td><div class="row-actions">
+                    ${a.status==='pending'?`<button class="btn btn-success btn-sm btn-icon" onclick="Admin.adAction(${a.id},'approved')" title="موافقة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${I.check}</svg></button>
+                    <button class="btn btn-danger btn-sm btn-icon" onclick="Admin.adAction(${a.id},'rejected')" title="رفض"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${I.x}</svg></button>`:''}
+                    <button class="btn ${a.featured?'btn-warning':'btn-outline'} btn-sm btn-icon" onclick="Admin.adAction(${a.id},'feature')" title="تمييز"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I.star}</svg></button>
+                    <button class="btn btn-outline btn-sm btn-icon" onclick="Admin.adAction(${a.id},'${a.status==='hidden'?'approved':'hidden'}')" title="${a.status==='hidden'?'إظهار':'إخفاء'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I.eye}</svg></button>
+                    <button class="btn btn-danger btn-sm btn-icon" onclick="Admin.adAction(${a.id},'delete')" title="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I.trash}</svg></button>
+                  </div></td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>`:this.emptyState('لا توجد إعلانات')}
+        </div>
+      </div>
+    `;
+  },
+
+  filterTable(val,type){
+    document.querySelectorAll('#adsTable tbody tr').forEach(r=>{
+      const match=(!val)||(r.dataset[type]===val);
+      r.style.display=match?'':'none';
+    });
+  },
+
+  async adAction(id,action){
+    const ad=DB.ads.find(a=>a.id===id);
+    if(!ad)return;
+
+    if(action==='delete'){
+      if(!confirm('هل أنت متأكد من حذف هذا الإعلان نهائياً؟'))return;
+      const {error}=await supa.from('ads').delete().eq('id',id);
+      if(error){this.toast('فشل حذف الإعلان','error');return}
+      DB.ads=DB.ads.filter(a=>a.id!==id);
+      this.toast('تم حذف الإعلان','success');
+    }else if(action==='feature'){
+      const {error}=await supa.from('ads').update({featured:!ad.featured}).eq('id',id);
+      if(error){this.toast('فشل التحديث','error');return}
+      ad.featured=!ad.featured;
+      this.toast(ad.featured?'تم تمييز الإعلان':'تم إلغاء التمييز','success');
+    }else{
+      const {error}=await supa.from('ads').update({status:action}).eq('id',id);
+      if(error){this.toast('فشل تحديث الحالة','error');return}
+      ad.status=action;
+      this.toast('تم تحديث حالة الإعلان','success');
+    }
+    this.render(this.currentTab);
+  },
+
+  viewUsers(){
+    const users=DB.users;
+    return `
+      <div class="panel">
+        <div class="panel-head"><h3>المستخدمون (${users.length})</h3></div>
+        <div class="panel-body">
+          <table>
+            <thead><tr><th>المستخدم</th><th>البريد</th><th>الهاتف</th><th>الدور</th><th>الحالة</th><th>تاريخ التسجيل</th><th>إجراءات</th></tr></thead>
+            <tbody>
+              ${users.map(u=>`<tr>
+                <td><div class="cell-title">${this.esc(u.name)}</div></td>
+                <td>${this.esc(u.email)}</td>
+                <td>${u.phone||'-'}</td>
+                <td><span class="badge badge-${u.role==='superadmin'?'gold':u.role==='admin'?'primary':'muted'}">${u.role}</span></td>
+                <td><span class="badge badge-${u.status==='active'?'success':'danger'}">${u.status==='active'?'نشط':'محظور'}</span></td>
+                <td>${u.joinedAt||'-'}</td>
+                <td><div class="row-actions">
+                  ${u.id!==Auth.current.id&&u.role!=='superadmin'?`
+                    <button class="btn btn-outline btn-sm" onclick="Admin.userAction('${u.id}','status')">${u.status==='active'?'حظر':'تفعيل'}</button>
+                    <button class="btn btn-outline btn-sm" onclick="Admin.userAction('${u.id}','role')">${u.role==='admin'?'إلغاء الإدارة':'جعل مشرف'}</button>
+                  `:'<span class="badge badge-gold">'+(u.id===Auth.current.id?'أنت':'—')+'</span>'}
+                </div></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  },
+
+  async userAction(id,action){
+    const u=DB.users.find(x=>x.id===id);
+    if(!u)return;
+    if(action==='status'){
+      const newStatus=u.status==='active'?'banned':'active';
+      const {error}=await supa.from('profiles').update({status:newStatus}).eq('id',id);
+      if(error){this.toast('فشل تحديث الحالة','error');return}
+      u.status=newStatus;
+      this.toast(newStatus==='active'?'تم تفعيل المستخدم':'تم حظر المستخدم','success');
+    }else if(action==='role'){
+      const newRole=u.role==='admin'?'user':'admin';
+      const {error}=await supa.from('profiles').update({role:newRole}).eq('id',id);
+      if(error){this.toast('فشل تحديث الصلاحية','error');return}
+      u.role=newRole;
+      this.toast('تم تحديث صلاحيات المستخدم','success');
+    }
+    this.render('users');
+  },
+
+  viewReports(){
+    const reports=[...DB.reports];
+    return `
+      <div class="panel">
+        <div class="panel-head"><h3>البلاغات (${reports.length})</h3></div>
+        <div class="panel-body">
+          ${reports.length?`<table>
+            <thead><tr><th>الإعلان</th><th>السبب</th><th>التفاصيل</th><th>المبلّغ</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+            <tbody>
+              ${reports.map(r=>{
+                const ad=DB.ads.find(a=>a.id===r.adId);
+                const u=DB.users.find(u=>u.id===r.reporterId);
+                return `<tr>
+                  <td>${ad?this.esc(ad.title):'محذوف'}</td>
+                  <td><span class="badge badge-danger">${this.esc(r.reason)}</span></td>
+                  <td>${this.esc(r.desc||'')}</td>
+                  <td>${u?u.name:'مستخدم محذوف'}</td>
+                  <td><span class="badge badge-${r.status==='pending'?'warning':'success'}">${r.status==='pending'?'قيد المعالجة':'تم الحل'}</span></td>
+                  <td><div class="row-actions">
+                    ${r.status==='pending'?`<button class="btn btn-success btn-sm" onclick="Admin.resolveReport(${r.id})">معالجة</button>`:''}
+                    ${ad?`<button class="btn btn-danger btn-sm btn-icon" onclick="Admin.adAction(${ad.id},'delete').then(()=>Admin.resolveReport(${r.id}))" title="حذف الإعلان"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I.trash}</svg></button>`:''}
+                  </div></td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>`:this.emptyState('لا توجد بلاغات')}
+        </div>
+      </div>
+    `;
+  },
+
+  async resolveReport(id){
+    const {error}=await supa.from('reports').update({status:'resolved'}).eq('id',id);
+    if(error){this.toast('فشل تحديث البلاغ','error');return}
+    const r=DB.reports.find(x=>x.id===id);
+    if(r)r.status='resolved';
+    this.toast('تم حل البلاغ','success');
+    this.render('reports');
+  },
+
+  viewBusinesses(){return this.simpleList('businesses','المحلات التجارية',[['name','الاسم'],['cat','الفئة'],['location','الموقع'],['phone','الهاتف']])},
+  viewServices(){return this.simpleList('services','الخدمات',[['title','العنوان'],['type','النوع'],['location','الموقع'],['price','السعر']])},
+  viewJobs(){return this.simpleList('jobs','الوظائف',[['title','العنوان'],['employer','صاحب العمل'],['salary','الراتب'],['location','الموقع']])},
+
+  simpleList(key,title,cols){
+    const data=DB[key];
+    return `
+      <div class="panel">
+        <div class="panel-head"><h3>${title} (${data.length})</h3></div>
+        <div class="panel-body">
+          ${data.length?`<table>
+            <thead><tr>${cols.map(c=>`<th>${c[1]}</th>`).join('')}<th>إجراءات</th></tr></thead>
+            <tbody>
+              ${data.map(item=>`<tr>
+                ${cols.map(c=>`<td>${this.esc(item[c[0]]??'-')}</td>`).join('')}
+                <td><button class="btn btn-danger btn-sm btn-icon" onclick="Admin.deleteItem('${key}',${item.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I.trash}</svg></button></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>`:this.emptyState('لا توجد بيانات')}
+        </div>
+      </div>
+    `;
+  },
+
+  async deleteItem(key,id){
+    if(!confirm('هل أنت متأكد من الحذف؟'))return;
+    const {error}=await supa.from(key).delete().eq('id',id);
+    if(error){this.toast('فشل الحذف','error');return}
+    DB[key]=DB[key].filter(x=>x.id!==id);
+    this.toast('تم الحذف بنجاح','success');
+    this.render(this.currentTab);
+  },
+
+  viewFeatured(){
+    const ads=DB.ads.filter(a=>a.featured);
+    return `
+      <div class="panel">
+        <div class="panel-head"><h3>الإعلانات المميزة (${ads.length})</h3></div>
+        <div class="panel-body">
+          ${ads.length?`<table>
+            <thead><tr><th>العنوان</th><th>الناشر</th><th>المشاهدات</th><th>التاريخ</th><th>إجراءات</th></tr></thead>
+            <tbody>
+              ${ads.map(a=>{
+                const u=DB.users.find(u=>u.id===a.userId);
+                return `<tr>
+                  <td><div class="cell-title">${this.esc(a.title)}</div></td>
+                  <td>${u?u.name:'محذوف'}</td>
+                  <td>${a.views||0}</td>
+                  <td>${new Date(a.createdAt).toLocaleDateString('ar-IQ')}</td>
+                  <td><button class="btn btn-warning btn-sm" onclick="Admin.adAction(${a.id},'feature')">إلغاء التمييز</button></td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>`:this.emptyState('لا توجد إعلانات مميزة')}
+        </div>
+      </div>
+    `;
+  },
+
+  viewCategories(){
+    return `
+      <div class="panel">
+        <div class="panel-head"><h3>الفئات</h3></div>
+        <div class="panel-body">
+          <table>
+            <thead><tr><th>الفئة</th><th>المعرّف</th><th>عدد الإعلانات</th></tr></thead>
+            <tbody>
+              ${CATS.map(c=>`<tr><td><div class="cell-title">${c.name}</div></td><td>${c.id}</td><td>${DB.ads.filter(a=>a.cat===c.id).length}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  },
+
+  viewLocations(){
+    const locations=DB.locations;
+    return `
+      <div class="panel">
+        <div class="panel-head"><h3>المواقع (${locations.length})</h3></div>
+        <div class="panel-body" style="padding:16px">
+          <div style="display:flex;gap:8px;margin-bottom:16px">
+            <input type="text" class="form-control" id="newLocationName" placeholder="اسم الموقع الجديد (مثال: الكفل - حي النصر)" style="flex:1">
+            <button class="btn btn-primary" onclick="Admin.addLocation()">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg> إضافة
+            </button>
+          </div>
+          ${locations.length?`<table>
+            <thead><tr><th>الموقع</th><th>عدد الإعلانات</th><th>إجراءات</th></tr></thead>
+            <tbody>
+              ${locations.map(l=>`<tr>
+                <td><div class="cell-title">${this.esc(l.name)}</div></td>
+                <td>${DB.ads.filter(a=>a.location===l.name).length}</td>
+                <td><button class="btn btn-danger btn-sm btn-icon" onclick="Admin.deleteLocation(${l.id})" title="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${I.trash}</svg></button></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>`:this.emptyState('لا توجد مواقع، أضف أول موقع بالأعلى')}
+        </div>
+      </div>
+    `;
+  },
+
+  async addLocation(){
+    const input=document.getElementById('newLocationName');
+    const name=input.value.trim();
+    if(!name){this.toast('اكتب اسم الموقع','error');return}
+    if(DB.locations.some(l=>l.name===name)){this.toast('هذا الموقع موجود مسبقاً','error');return}
+    const {data,error}=await supa.from('locations').insert({name,sort_order:DB.locations.length+1}).select().single();
+    if(error){this.toast('فشل إضافة الموقع','error');return}
+    DB.locations.push({id:data.id,name:data.name});
+    this.toast('تم إضافة الموقع','success');
+    this.render('locations');
+  },
+
+  async deleteLocation(id){
+    if(!confirm('هل أنت متأكد من حذف هذا الموقع؟'))return;
+    const {error}=await supa.from('locations').delete().eq('id',id);
+    if(error){this.toast('فشل حذف الموقع','error');return}
+    DB.locations=DB.locations.filter(l=>l.id!==id);
+    this.toast('تم حذف الموقع','success');
+    this.render('locations');
+  },
+
+  viewSettings(){
+    const s=DB.settings;
+    return `
+      <div class="panel">
+        <div class="panel-head"><h3>إعدادات الموقع</h3></div>
+        <div class="panel-body" style="padding:20px">
+          <div class="form-row">
+            <div class="form-group"><label>اسم الموقع</label><input type="text" class="form-control" id="setSiteName" value="${this.esc(s.site_name||'')}"></div>
+            <div class="form-group"><label>الشعار النصي</label><input type="text" class="form-control" id="setTagline" value="${this.esc(s.tagline||'')}"></div>
+          </div>
+          <div class="form-group" style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface-2);border-radius:10px">
+            <input type="checkbox" id="setAutoApprove" ${s.auto_approve?'checked':''}>
+            <label for="setAutoApprove" style="margin:0">الموافقة التلقائية على الإعلانات</label>
+          </div>
+          <h3 style="margin:20px 0 12px;font-size:15px">معلومات التواصل (تظهر بأسفل الموقع)</h3>
+          <div class="form-row">
+            <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="setAddress" value="${this.esc(s.contact_address||'')}"></div>
+            <div class="form-group"><label>رقم الهاتف</label><input type="text" class="form-control" id="setPhone" value="${this.esc(s.contact_phone||'')}"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>البريد الإلكتروني</label><input type="email" class="form-control" id="setEmail" value="${this.esc(s.contact_email||'')}"></div>
+            <div class="form-group"><label>أوقات العمل</label><input type="text" class="form-control" id="setHours" value="${this.esc(s.contact_hours||'')}"></div>
+          </div>
+          <button class="btn btn-primary" onclick="Admin.saveSettings()">حفظ الإعدادات</button>
+        </div>
+      </div>
+    `;
+  },
+
+  async saveSettings(){
+    const site_name=document.getElementById('setSiteName').value;
+    const tagline=document.getElementById('setTagline').value;
+    const auto_approve=document.getElementById('setAutoApprove').checked;
+    const contact_address=document.getElementById('setAddress').value;
+    const contact_phone=document.getElementById('setPhone').value;
+    const contact_email=document.getElementById('setEmail').value;
+    const contact_hours=document.getElementById('setHours').value;
+    const {error}=await supa.from('settings').update({site_name,tagline,auto_approve,contact_address,contact_phone,contact_email,contact_hours}).eq('id',1);
+    if(error){this.toast('فشل حفظ الإعدادات','error');return}
+    DB.settings={...DB.settings,site_name,tagline,auto_approve,contact_address,contact_phone,contact_email,contact_hours};
+    this.toast('تم حفظ الإعدادات','success');
+  },
+
+  viewPermissions(){
+    const users=DB.users;
+    return `
+      <div class="panel">
+        <div class="panel-head"><h3>إدارة الصلاحيات</h3></div>
+        <div class="panel-body" style="padding:20px">
+          <p style="margin-bottom:16px;color:var(--text-muted)">يمكنك منح صلاحيات المشرف (Admin) للمستخدمين للسماح لهم بدخول لوحة الإدارة وإدارة الإعلانات.</p>
+          <table>
+            <thead><tr><th>المستخدم</th><th>الدور الحالي</th><th>تغيير الدور</th></tr></thead>
+            <tbody>
+              ${users.map(u=>`<tr>
+                <td><div class="cell-title">${this.esc(u.name)}</div><div class="cell-meta">${this.esc(u.email)}</div></td>
+                <td><span class="badge badge-${u.role==='superadmin'?'gold':u.role==='admin'?'primary':'muted'}">${u.role}</span></td>
+                <td>
+                  ${u.role!=='superadmin'?`<select class="filter-select" onchange="Admin.changeRole('${u.id}',this.value)">
+                    <option value="user" ${u.role==='user'?'selected':''}>مستخدم عادي</option>
+                    <option value="business" ${u.role==='business'?'selected':''}>تاجر</option>
+                    <option value="admin" ${u.role==='admin'?'selected':''}>مدير</option>
+                  </select>`:'<span style="color:var(--text-muted)">لا يمكن تعديله</span>'}
+                </td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  },
+
+  async changeRole(id,role){
+    const u=DB.users.find(x=>x.id===id);
+    if(!u)return;
+    const {error}=await supa.from('profiles').update({role}).eq('id',id);
+    if(error){this.toast('فشل تحديث الدور','error');return}
+    u.role=role;
+    this.toast('تم تحديث الدور','success');
+  },
+
+  quickSearch(q){
+    if(this.currentTab!=='ads')this.render('ads');
+    document.querySelectorAll('#adsTable tbody tr').forEach(r=>{
+      const text=r.innerText.toLowerCase();
+      r.style.display=text.includes(q.toLowerCase())?'':'none';
+    });
+  },
+
+  toggleTheme(){
+    const cur=Local.get('theme')||'light';
+    Local.set('theme',cur==='light'?'dark':'light');
+    this.applyTheme();
+  },
+
+  applyTheme(){
+    const t=Local.get('theme')||'light';
+    document.documentElement.setAttribute('data-theme',t);
+    document.getElementById('themeIcon').innerHTML=t==='dark'?'<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>':'<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>';
+  },
+
+  closeModal(){document.getElementById('modal').classList.remove('active')},
+
+  emptyState(msg){
+    return `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><h3>${msg}</h3></div>`;
+  },
+
+  toast(msg,type='info'){
+    const icons={success:I.check,error:'<path d="M18 6L6 18M6 6l12 12"/>',warning:I.flag};
+    const t=document.createElement('div');
+    t.className='toast '+type;
+    t.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${icons[type]||I.eye}</svg><span>${msg}</span>`;
+    document.getElementById('toasts').appendChild(t);
+    setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},3000);
+  },
+
+  esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+};
+
+function fixRtlScrollPosition(){
+  window.scrollTo(9999,0);
+  document.documentElement.scrollLeft=9999;
+  document.body.scrollLeft=9999;
+}
+fixRtlScrollPosition();
+document.addEventListener('DOMContentLoaded',()=>{fixRtlScrollPosition();Admin.init();});
+window.addEventListener('load',fixRtlScrollPosition);
+</script>
+</body>
+</html>
